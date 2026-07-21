@@ -1,0 +1,30 @@
+name: "💡 용어 · 번역 개선 제안"
+description: 더 나은 번역, 용어 통일, 문체 등 개선 아이디어를 제안해 주세요.
+title: "[제안] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        제안 전에 [docs/glossary.md](https://github.com/synml/KSP-Korean-Localization/blob/main/docs/glossary.md)에서
+        해당 용어가 이미 정해진 표준인지 한 번 확인해 주시면 좋습니다.
+        (표준이 정해진 용어라도, 그 표준 자체가 어색하다는 제안은 환영합니다.)
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 무엇을 어떻게 바꾸면 좋을까요?
+      description: 현재 번역 → 제안 번역 형태로 적어 주시면 검토가 쉽습니다.
+      placeholder: |
+        예) 여러 부품 설명에 섞여 쓰이는 "쓰로틀 / 스로틀"을 "스로틀"로 통일했으면 합니다.
+        예) "매뉴버 노드"보다 "기동 노드"가 더 자연스러울 것 같습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: 이유 (선택)
+      description: 왜 그렇게 바꾸는 게 더 나은지 근거가 있다면 적어 주세요.
+    validations:
+      required: false

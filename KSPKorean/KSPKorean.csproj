@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- SDK 스타일 필수: 현행 KSPBuildTools compile 액션은 dotnet restore를 쓰므로
+       구식(packages.config) 프로젝트는 패키지가 복원되지 않아 CI에서 MSB3644로 실패한다.
+       KSP 어셈블리 참조와 net472 참조 어셈블리 문제는 KSPBuildTools 패키지가 처리:
+       - 로컬: KSP 설치 자동 탐지 (KSP_ROOT 환경 변수, Steam 기본 경로 등)
+       - CI:   compile 액션이 KSPBT_ManagedPath로 참조 어셈블리 경로를 주입
+       빌드 출력은 기본값으로 ../GameData/KSPKorean/ 에 복사된다 (KSPBT_ModRoot 기본값). -->
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>KSPKorean</RootNamespace>
+    <AssemblyName>KSPKorean</AssemblyName>
+    <!-- 버전은 Properties/AssemblyInfo.cs에서 관리 (CI update-version 액션이 치환) -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="KSPBuildTools" Version="1.1.1" />
+  </ItemGroup>
+
+</Project>

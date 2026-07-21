@@ -1,0 +1,24 @@
+{
+	"NAME": "KSP Korean Localization",
+	"URL": "https://github.com/synml/KSP-Korean-Localization/releases/latest/download/KSPKorean.version",
+	"DOWNLOAD": "https://github.com/synml/KSP-Korean-Localization/releases",
+	"VERSION":
+	{
+		"MAJOR": @VERSION_MAJOR@,
+		"MINOR": @VERSION_MINOR@,
+		"PATCH": @VERSION_PATCH@,
+		"BUILD": @VERSION_BUILD@
+	},
+	"KSP_VERSION_MIN":
+	{
+		"MAJOR": 1,
+		"MINOR": 12,
+		"PATCH": 0
+	},
+	"KSP_VERSION_MAX":
+	{
+		"MAJOR": 1,
+		"MINOR": 12,
+		"PATCH": 99
+	}
+}

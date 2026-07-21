@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 용어 표준 확인 (glossary)
+    url: https://github.com/synml/KSP-Korean-Localization/blob/main/docs/glossary.md
+    about: 특정 용어의 표준 번역이 궁금하다면 먼저 용어집을 확인해 주세요. 용어 자체에 대한 건의는 "용어·번역 개선 제안" 템플릿을 이용해 주세요.

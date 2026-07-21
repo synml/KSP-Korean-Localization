@@ -1,0 +1,79 @@
+name: "🐛 동작 버그 (영어로 나옴 · 적용 안 됨 · 충돌)"
+description: 한국어가 적용되지 않거나, 게임이 튕기거나, 다른 오작동을 알려 주세요.
+title: "[버그] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        아래 정보를 채워 주시면 원인을 훨씬 빨리 찾을 수 있습니다. 🔍
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 무슨 일이 일어나나요?
+      description: 겪고 있는 문제를 설명해 주세요.
+      placeholder: |
+        예) 패치를 설치했는데 게임이 계속 영어로만 표시됩니다.
+        예) 특정 장면에 들어가면 게임이 튕깁니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 방법
+      description: 어떤 순서로 하면 문제가 나타나는지 적어 주세요.
+      placeholder: |
+        1. KSP 실행
+        2. ...
+        3. ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: 설치 방법
+      options:
+        - CKAN
+        - 수동 (릴리스 zip 압축 해제)
+        - 잘 모름
+    validations:
+      required: true
+
+  - type: input
+    id: patch-version
+    attributes:
+      label: 한글패치 버전
+      placeholder: "예) v1.0.3"
+    validations:
+      required: true
+
+  - type: input
+    id: ksp-version
+    attributes:
+      label: KSP 버전
+      placeholder: "예) 1.12.5"
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: 함께 사용 중인 모드 (선택)
+      description: 다른 모드를 함께 쓰고 있다면 목록을 적어 주세요. 충돌 여부 확인에 도움이 됩니다.
+      placeholder: |
+        예) ModuleManager, MechJeb2, ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: KSP.log (선택 · 튕김/미적용 시 큰 도움)
+      description: |
+        KSP 설치 폴더의 `KSP.log` 파일을 첨부하거나, 관련 부분을 붙여넣어 주세요.
+        용량이 크면 파일을 이 칸에 끌어다 놓으면 첨부됩니다.
+    validations:
+      required: false

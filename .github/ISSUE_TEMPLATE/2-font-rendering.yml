@@ -1,0 +1,58 @@
+name: "🟥 글자 깨짐 · 폰트 문제 (□ · 안 보임 · 잘림)"
+description: 한글이 □(네모)로 보이거나, 글자가 안 나오거나, UI에서 잘리는 문제를 알려 주세요.
+title: "[폰트] "
+labels: ["font"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        이 문제는 **스크린샷이 거의 필수**입니다. 어떻게 깨져 보이는지가 원인 파악에 가장 중요합니다. 📸
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: 어떤 증상인가요?
+      options:
+        - □(네모)나 빈칸으로 표시됨
+        - 글자가 아예 안 보임 (투명/공백)
+        - 글자가 UI 칸에서 잘리거나 삐져나옴
+        - 글자가 겹치거나 깨져 보임
+        - 기타 (아래에 설명)
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: 어디에서 보이나요?
+      description: 문제가 나타나는 화면·위치를 적어 주세요.
+      placeholder: |
+        예) 선박 이름을 한글로 입력할 때 자음/모음(ㄱ, ㅏ)이 □로 보임
+        예) 부품 검색창에 입력한 글자가 안 보임
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 스크린샷
+      description: 이미지를 이 칸에 끌어다 놓거나 붙여넣어 주세요. (문제 부위가 잘 보이게)
+    validations:
+      required: true
+
+  - type: input
+    id: patch-version
+    attributes:
+      label: 한글패치 버전
+      placeholder: "예) v1.0.3"
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: 그래픽카드 (선택)
+      description: 희귀 음절(뷁 등)이 깨진다면 GPU 정보가 도움이 됩니다. (korean2 폰트는 DX10.1 이상 필요)
+      placeholder: "예) NVIDIA GTX 1060 / Intel UHD 620"
+    validations:
+      required: false

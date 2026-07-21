@@ -1,0 +1,83 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.parse_version.outputs.version }}
+    steps:
+      - name: Parse and Validate Version from Tag
+        id: parse_version
+        run: |
+          TAG=${{ github.ref_name }}
+          echo "Processing tag: $TAG"
+
+          if [[ $TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+            MAJOR=${BASH_REMATCH[1]}
+            MINOR=${BASH_REMATCH[2]}
+            PATCH=${BASH_REMATCH[3]}
+
+            # The build number is optional, so check if the 5th group exists
+            if [[ -n "${BASH_REMATCH[5]}" ]]; then
+              BUILD=${BASH_REMATCH[5]}
+            else
+              echo "Build number not found in tag, defaulting to 0."
+              BUILD=0
+            fi
+
+            VERSION="$MAJOR.$MINOR.$PATCH.$BUILD"
+            echo "Successfully parsed version: $VERSION"
+
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+          else
+            echo "::error::Tag format is invalid. Expected vMAJOR.MINOR.PATCH or vMAJOR.MINOR.PATCH.BUILD"
+            exit 1
+          fi
+
+  build:
+    needs: validate
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    env:
+      TEMPLATE_EXTENSION: ".versiontemplate"
+      ARTIFACTS: GameData LICENSE* README*
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Update Version
+        uses: KSPModdingLibs/KSPBuildTools/.github/actions/update-version@main
+        env:
+          VERSION_STRING: ${{ needs.validate.outputs.version }}
+        with:
+          version-string: ${{ needs.validate.outputs.version }}
+          template-extension: ${{ env.TEMPLATE_EXTENSION }}
+
+      - name: Compile
+        uses: KSPModdingLibs/KSPBuildTools/.github/actions/compile@main
+
+      - name: Build
+        id: assemble
+        uses: KSPModdingLibs/KSPBuildTools/.github/actions/assemble-release@main
+        with:
+          artifacts: ${{ env.ARTIFACTS }}
+          output-file-name: ${{ github.event.repository.name }}-v${{ needs.validate.outputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            ${{ steps.assemble.outputs.artifact-zip-path }}
+            GameData/KSPKorean/KSPKorean.version

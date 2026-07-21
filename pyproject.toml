@@ -1,0 +1,18 @@
+[project]
+name = "ksp-korean-localization"
+version = "0.1.0"
+description = "KSP Korean Patch Development Tool (Translation Verification, Term Extraction, Font Bundle Generation)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "freetype-py",
+    "numpy",
+    "pillow",
+    "scipy",
+    "unitypy",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+]

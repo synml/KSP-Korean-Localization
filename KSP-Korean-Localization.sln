@@ -1,0 +1,25 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KSPKorean", "KSPKorean\KSPKorean.csproj", "{1C2B7623-14DF-45EF-9A5C-822E82B4CE75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C2B7623-14DF-45EF-9A5C-822E82B4CE75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C2B7623-14DF-45EF-9A5C-822E82B4CE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C2B7623-14DF-45EF-9A5C-822E82B4CE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2B7623-14DF-45EF-9A5C-822E82B4CE75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C41A2EED-CF4B-4D9D-8EF0-04059992E42E}
+	EndGlobalSection
+EndGlobal

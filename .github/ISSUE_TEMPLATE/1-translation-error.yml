@@ -1,0 +1,66 @@
+name: "🔤 번역 오류 제보 (오역 · 오탈자 · 어색한 표현)"
+description: 번역이 잘못됐거나, 오타·띄어쓰기, 문장이 어색한 곳을 알려 주세요.
+title: "[번역] "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        제보해 주셔서 감사합니다! 🙏
+        **글자가 □(네모)로 깨져 보이는 문제**는 이 템플릿이 아니라 "글자 깨짐 · 폰트 문제" 템플릿을 이용해 주세요.
+
+  - type: textarea
+    id: location
+    attributes:
+      label: 어디에서 보이나요?
+      description: 문제가 나타나는 위치를 최대한 구체적으로 적어 주세요. (스크린샷이 가장 확실합니다)
+      placeholder: |
+        예) 부품 목록 > 엔진 > "LV-909 테리어"의 설명 두 번째 문장
+        예) 설정 화면 > 그래픽 탭의 "안티에일리어싱" 항목
+        예) 우주센터 씬 우측 하단 알림 메시지
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: 현재 번역 (지금 이렇게 나와요)
+      description: 화면에 실제로 표시되는 문장을 그대로 적어 주세요.
+      placeholder: 예) 이 엔진은 진공에서 최고의 성능을 발위합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 제안 번역 (이렇게 고치면 좋겠어요)
+      description: 이렇게 바뀌었으면 하는 문장이 있다면 적어 주세요. (없으면 "무엇이 이상한지"만 적어도 괜찮습니다)
+      placeholder: 예) 이 엔진은 진공에서 최고의 성능을 발휘합니다. ('발위' → '발휘' 오타)
+    validations:
+      required: false
+
+  - type: input
+    id: autoloc
+    attributes:
+      label: "#autoLOC 키 (선택 · 아는 경우만)"
+      description: 번역 키를 알고 있다면 적어 주세요. 모르면 비워 두셔도 됩니다.
+      placeholder: "#autoLOC_502000"
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 스크린샷
+      description: 문제가 보이는 화면을 캡처해 이 칸에 끌어다 놓거나 붙여넣어 주세요. (문제 부위가 잘 보이게)
+    validations:
+      required: true
+
+  - type: input
+    id: patch-version
+    attributes:
+      label: 한글패치 버전
+      description: 설치한 KSPKorean 버전 (CKAN 또는 릴리스 페이지에서 확인). 모르면 "모름"이라고 적어 주세요.
+      placeholder: "예) v1.0.3"
+    validations:
+      required: true
