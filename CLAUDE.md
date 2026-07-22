@@ -15,6 +15,7 @@ GameData/KSPKorean/Localization/        # ★ 번역 원본(canonical) — dicti
 KSPKorean/                              # C# 플러그인 (ko 등록/전환)
 scripts/                                # validate.py(커밋 전 필수), build_font.py(폰트 번들), extract_glossary.py, untranslated.py(미번역 목록), ksploc.py(공용 파서)
 docs/                                   # 용어집, 리뷰 체크리스트
+install.cmd                             # 수동 설치 도우미 (cmd+PowerShell 하이브리드, 릴리스 자산으로 첨부)
 KSPKoreanLocalization.netkan            # CKAN 제출용 메타데이터 (YAML) — 이 파일이 원본
 pyproject.toml / uv.lock / .venv        # uv 프로젝트 (파이썬 의존성 + ruff)
 ```
@@ -128,7 +129,15 @@ Python으로 작성. 검증 통과 = 커밋 가능, 최종 확인은 인게임.
 - `.github/workflows/build.yml`: 태그(`v*.*.*`) push 시 KSPModdingLibs/KSPBuildTools 액션으로
   버전 치환(update-version) → 플러그인 컴파일(compile) → zip 어셈블(assemble-release, ARTIFACTS:
   GameData LICENSE\* README\*) → `softprops/action-gh-release@v3`로 릴리스 생성 (자산: zip +
-  KSPKorean.version). 릴리스 생성은 assemble-release 액션의 `artifact-zip-path` 출력을 쓴다.
+  KSPKorean.version, install.cmd). 릴리스 생성은 assemble-release 액션의 `artifact-zip-path` 출력을 쓴다.
+  `install.cmd`를 릴리스 자산으로 붙이는 이유는 raw.githubusercontent가 `text/plain`+nosniff로 응답해
+  브라우저에서 다운로드가 아니라 표시되기 때문 — 릴리스 자산이라야 원클릭 링크
+  (`releases/latest/download/install.cmd`)가 파일명 그대로 저장된다. **자산 이름을 바꾸면 안 된다.**
+  UTF-8(BOM 없음)+CRLF 유지 — `.gitattributes`의 `*.cmd text eol=crlf`가 강제한다.
+  구조는 cmd 스텁이 자기 파일을 UTF-8로 읽어 `#:PSBEGIN` **마지막** 등장 이후를 PowerShell로 실행
+  (LastIndexOf여야 함 — 스텁 자신에 마커 문자열이 들어 있다). **사용자는 cmd만 받는 전제**이므로 zip은
+  항상 GitHub 최신 릴리스에서 내려받아 설치 후 지운다(인자 `%1`은 관리자 권한 재실행 시 재다운로드를
+  피하려는 내부 용도). KSP 경로는 Steam 레지스트리+libraryfolders.vdf와 관용 경로에서 탐지한다.
 - **csproj는 SDK 스타일 + PackageReference(KSPBuildTools 1.1.1) 필수.** 구식 packages.config는
   현행 compile 액션의 `dotnet restore`가 복원하지 못해 리눅스에서 MSB3644로 실패한다. KSPBuildTools는
   프레임워크 참조 어셈블리 탐색을 끄고 System/Unity/게임 어셈블리를 전부 KSP Managed 폴더

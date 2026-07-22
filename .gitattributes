@@ -1,5 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Batch files must keep CRLF (cmd.exe requirement), even on Linux CI checkout
+*.cmd text eol=crlf
+
 # Binary conversion is prohibited
 *.fnt binary

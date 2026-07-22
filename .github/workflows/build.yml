@@ -81,3 +81,4 @@ jobs:
           files: |
             ${{ steps.assemble.outputs.artifact-zip-path }}
             GameData/KSPKorean/KSPKorean.version
+            install.cmd
