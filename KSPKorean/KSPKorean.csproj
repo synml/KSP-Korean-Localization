@@ -10,7 +10,10 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>KSPKorean</RootNamespace>
-    <AssemblyName>KSPKorean</AssemblyName>
+    <!-- CKAN identifier와 일치시킨다. CKAN은 DLL 파일명으로 수동 설치본을 감지하므로
+         불일치 시 PluginsValidator 경고와 함께 중복 설치가 감지되지 않는다.
+         출력 폴더는 MSBuildProjectName(=KSPKorean) 기준이라 영향받지 않는다. -->
+    <AssemblyName>KSPKoreanLocalization</AssemblyName>
     <!-- 버전은 Properties/AssemblyInfo.cs에서 관리 (CI update-version 액션이 치환) -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
