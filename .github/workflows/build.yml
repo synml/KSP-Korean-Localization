@@ -1,13 +1,39 @@
-name: Create Release
+name: Build and Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
       - "v[0-9]+.[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
+  # 태그가 아닌 푸시: 릴리스를 만들지 않고 컴파일만 검증한다.
+  # 태그를 달기 전에 빌드가 깨졌는지 미리 알기 위한 것.
+  compile:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Compile
+        uses: KSPModdingLibs/KSPBuildTools/.github/actions/compile@main
+
+      - name: Verify assembly name matches CKAN identifier
+        run: |
+          expected="GameData/KSPKorean/KSPKoreanLocalization.dll"
+          if [ ! -f "$expected" ]; then
+            echo "::error::$expected 이 생성되지 않았습니다."
+            echo "실제 산출물:"
+            ls -1 GameData/KSPKorean/*.dll 2>/dev/null || echo "  (dll 없음)"
+            exit 1
+          fi
+          echo "OK: $expected"
+
   validate:
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.parse_version.outputs.version }}
