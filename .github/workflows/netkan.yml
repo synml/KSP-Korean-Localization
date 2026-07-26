@@ -1,0 +1,30 @@
+name: Validate CKAN metadata
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*.netkan"
+      - "GameData/KSPKorean/KSPKorean.version*"
+      - ".github/workflows/netkan.yml"
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+
+jobs:
+  Inflate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Test netkan
+        uses: KSP-CKAN/xKAN-meta_testing@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          pull request url: ${{ github.event.pull_request.url }}
