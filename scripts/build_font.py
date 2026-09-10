@@ -37,11 +37,14 @@ import argparse
 import hashlib
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 import freetype
 import numpy as np
 import UnityPy
+from numpy.typing import NDArray
 from scipy.ndimage import distance_transform_edt
+from UnityPy.files import BundleFile, ObjectReader
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_PATH = REPO_ROOT / "GameData" / "KSPKorean" / "korean.fnt"
@@ -58,9 +61,18 @@ MAT2_PID = -2103592330720330018
 DEF_PID = -6447205430494472417  # kspfonts_bundle (KSPBundleDefinition TextAsset)
 BUNDLE_PID = 1
 
+# freetype는 상수를 globals().update로 만들어 정적 타입 검사기가 못 본다 → 사전에서 꺼낸다
+FT_LOAD_RENDER: int = freetype.FT_LOAD_FLAGS["FT_LOAD_RENDER"]
+FT_LOAD_TARGET_NORMAL: int = freetype.FT_LOAD_TARGETS["FT_LOAD_TARGET_NORMAL"]
+
+type Atlas = NDArray[np.uint8]
+type Glyph = dict[str, float | int]
+type FontInfo = dict[str, str | float | int]
+type FontData = tuple[Atlas, list[Glyph], FontInfo]
+
 
 def ksx1001_syllables() -> set[str]:
-    chars = set()
+    chars: set[str] = set()
     for lead in range(0xB0, 0xC9):
         for trail in range(0xA1, 0xFF):
             try:
@@ -72,9 +84,11 @@ def ksx1001_syllables() -> set[str]:
     return chars
 
 
-def render_sdf(face: freetype.Face, ch: str, pad: int):
+def render_sdf(
+    face: freetype.Face, ch: str, pad: int
+) -> tuple[Atlas | None, float, float, float, float, float]:
     """(sdf_patch, w, h, bearingX, bearingY, advance) — 메트릭은 샘플링 px 기준."""
-    face.load_char(ch, freetype.FT_LOAD_RENDER | freetype.FT_LOAD_TARGET_NORMAL)
+    face.load_char(ch, FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL)
     g = face.glyph
     m = g.metrics
     metrics = (
@@ -92,7 +106,9 @@ def render_sdf(face: freetype.Face, ch: str, pad: int):
     canvas = np.zeros((bh + margin * 2, bw + margin * 2), dtype=np.uint8)
     canvas[margin : margin + bh, margin : margin + bw] = bitmap
     inside = canvas >= 128
-    signed = distance_transform_edt(inside) - distance_transform_edt(~inside)
+    signed = np.asarray(distance_transform_edt(inside), dtype=np.float64) - np.asarray(
+        distance_transform_edt(~inside), dtype=np.float64
+    )
     sdf = np.clip(0.5 + signed / (2 * pad * SS), 0.0, 1.0)
     h2, w2 = sdf.shape[0] // SS, sdf.shape[1] // SS
     sdf = sdf[: h2 * SS, : w2 * SS].reshape(h2, SS, w2, SS).mean(axis=(1, 3))
@@ -107,7 +123,7 @@ def build_atlas(
     width: int,
     height: int,
     face_name: str,
-):
+) -> FontData:
     """(atlas ndarray, glyphs, fontInfo) 생성."""
     face = freetype.Face(str(font_path))
     face.set_pixel_sizes(0, point * SS)
@@ -116,7 +132,7 @@ def build_atlas(
     rendered.sort(key=lambda r: -(r[1].shape[0] if r[1] is not None else 0))
 
     atlas = np.zeros((height, width), dtype=np.uint8)
-    glyphs = []
+    glyphs: list[Glyph] = []
     x = y = shelf_h = 0
     for ch, patch, w, h, bx, by, adv in rendered:
         if patch is None:
@@ -158,7 +174,7 @@ def build_atlas(
         shelf_h = max(shelf_h, ph)
 
     scale = point / face.units_per_EM
-    face.load_char("H", freetype.FT_LOAD_RENDER)
+    face.load_char("H", FT_LOAD_RENDER)
     cap = face.glyph.metrics.horiBearingY / 64 / SS
     ga = next(g["xAdvance"] for g in glyphs if g["width"] > 0)
     info = {
@@ -200,8 +216,16 @@ def tmp_hash(s: str) -> int:
 
 
 def apply_font(
-    objects, font_pid, atlas_pid, mat_pid, name, atlas, glyphs, info, fallback_pids=()
-):
+    objects: dict[int, ObjectReader],
+    font_pid: int,
+    atlas_pid: int,
+    mat_pid: int,
+    name: str,
+    atlas: Atlas,
+    glyphs: list[Glyph],
+    info: FontInfo,
+    fallback_pids: tuple[int, ...] = (),
+) -> None:
     font = objects[font_pid]
     tree = font.read_typetree()
     tree["m_Name"] = name
@@ -243,7 +267,7 @@ def apply_font(
     replacements = {
         "_TextureWidth": info["AtlasWidth"],
         "_TextureHeight": info["AtlasHeight"],
-        "_GradientScale": info["Padding"] + 1.0,
+        "_GradientScale": float(info["Padding"]) + 1.0,
     }
     tree["m_SavedProperties"]["m_Floats"] = [
         (k, replacements.get(k, v)) for k, v in tree["m_SavedProperties"]["m_Floats"]
@@ -251,20 +275,21 @@ def apply_font(
     mat.save_typetree(tree)
 
 
-def build_bundle(ksp_root: Path, font1, font2) -> None:
+def build_bundle(ksp_root: Path, font1: FontData, font2: FontData) -> None:
     template = ksp_root / "GameData" / "Squad" / "KSPedia" / "kspfonts.ksp"
     if not template.exists():
         raise SystemExit(f"템플릿 없음: {template}")
     env = UnityPy.load(str(template))
+    bundle_file = cast(BundleFile, env.file)
 
     new_cab = "CAB-" + hashlib.md5(b"kspkorean-pretendard-v2").hexdigest()
-    renames = {}
-    for old in list(env.file.files.keys()):
+    renames: dict[str, str] = {}
+    for old in list(bundle_file.files.keys()):
         if old.startswith("CAB-"):
             suffix = old[old.index(".") :] if "." in old else ""
             renames[old] = new_cab + suffix
     for old, new in renames.items():
-        env.file.files[new] = env.file.files.pop(old)
+        bundle_file.files[new] = bundle_file.files.pop(old)
 
     objects = {obj.path_id: obj for obj in env.objects}
 
@@ -299,7 +324,7 @@ def build_bundle(ksp_root: Path, font1, font2) -> None:
     bundle = objects[BUNDLE_PID]
     tree = bundle.read_typetree()
     tree["m_Name"] = "korean"
-    container = []
+    container: list[tuple[str, dict[str, Any]]] = []
     for path, asset_info in tree["m_Container"]:
         pid = asset_info["asset"]["m_PathID"]
         if pid == FONT1_PID:
@@ -320,10 +345,10 @@ def build_bundle(ksp_root: Path, font1, font2) -> None:
             if sd and sd.get("path"):
                 streams_used = True
     if not streams_used:
-        for name in [n for n in env.file.files if n.endswith(".resS")]:
-            del env.file.files[name]
+        for name in [n for n in bundle_file.files if n.endswith(".resS")]:
+            del bundle_file.files[name]
 
-    OUT_PATH.write_bytes(env.file.save(packer="lz4"))
+    OUT_PATH.write_bytes(bundle_file.save(packer="lz4"))
 
 
 def verify() -> None:

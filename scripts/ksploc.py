@@ -152,7 +152,7 @@ def write_dictionary(
 
 # 리포 루트 기준 (영어 원문, 번역본) 파일 쌍. validate/extract_glossary가 공용으로 쓴다.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-FILE_PAIRS = [
+FILE_PAIRS: list[tuple[Path, Path]] = [
     (
         REPO_ROOT / "reference_english" / "dictionary.en.cfg",
         REPO_ROOT / "GameData" / "KSPKorean" / "Localization" / "dictionary.ko.cfg",

@@ -249,8 +249,8 @@ def main() -> int:
     for category, terms in TERMS.items():
         print(f"\n## {category}")
         for term in terms:
-            found: Counter = Counter()
-            example_key = None
+            found: Counter[str] = Counter()
+            example_key: str | None = None
             for english, korean in dictionaries:
                 ko_map = korean.mapping()
                 for e in english.entries:

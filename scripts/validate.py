@@ -19,12 +19,14 @@
 from __future__ import annotations
 
 import argparse
+import io
 import re
 import sys
 from collections import Counter
+from pathlib import Path
 
 # cp949 등 비UTF-8 콘솔에서 요약 줄의 em-dash(—) 등이 UnicodeEncodeError로 크래시하는 것 방지
-if hasattr(sys.stdout, "reconfigure"):
+if isinstance(sys.stdout, io.TextIOWrapper):
     sys.stdout.reconfigure(encoding="utf-8")
 
 from ksploc import FILE_PAIRS, REPO_ROOT, parse_dictionary
@@ -155,7 +157,7 @@ def korean_spelling_issues(value: str) -> list[tuple[str, str]]:
 
 
 # 의도적으로 원문과 태그가 다른 키. 값 = 근거. 남발 금지 — 새 항목은 근거 필수.
-LINGOONA_WAIVERS = {
+LINGOONA_WAIVERS: dict[str, str] = {
     # en: "Ferry <<n:1[...]>> ... to <<o:2>> <<n:3[destination/...]>>".
     # o:2(목적지 개수)는 한국어 문장에서 생략. 우크라이나 패치도 동일하게 생략한 선례 있음.
     "#autoLOC_7000003": "o:2 목적지 개수 생략 (uk 패치 동일)",
@@ -168,7 +170,7 @@ SPELLING_WAIVERS: dict[str, str] = {
 }
 
 # TMP에서 여는/닫는 짝이 필요한 태그. 이 외(sprite, pos 등)는 단독 사용 가능.
-PAIRED_TAGS = {
+PAIRED_TAGS: set[str] = {
     "b",
     "i",
     "u",
@@ -193,14 +195,14 @@ PAIRED_TAGS = {
 }
 
 
-def lingoona_info(value: str) -> tuple[set[int], Counter]:
+def lingoona_info(value: str) -> tuple[set[int], Counter[str]]:
     """(참조하는 인자 번호 집합, 태그 시그니처 멀티셋).
 
     대괄호 안 복수형/성별 형태는 번역 대상이므로 시그니처에서는 형태 개수만 남긴다.
     예: <<n:1[ part/ part/ parts]>> → 'n:1[3]', <<A:1>> → 'A:1', <<2>> → '2'
     """
     args: set[int] = set()
-    signatures: Counter = Counter()
+    signatures: Counter[str] = Counter()
     for tag in LINGOONA_RE.findall(value):
         content = tag[2:-2]
         prefix, bracket, forms = content.partition("[")
@@ -212,10 +214,10 @@ def lingoona_info(value: str) -> tuple[set[int], Counter]:
     return args, signatures
 
 
-def rich_tag_counts(value: str) -> Counter:
+def rich_tag_counts(value: str) -> Counter[tuple[str, str]]:
     """태그 이름별 (이름, 여는/닫는) 개수. Lingoona 태그는 먼저 제거하고 센다."""
     stripped = LINGOONA_RE.sub("", value)
-    counts: Counter = Counter()
+    counts: Counter[tuple[str, str]] = Counter()
     for close, name in (
         (m.group(1), m.group(2).lower()) for m in RICH_TAG_RE.finditer(stripped)
     ):
@@ -223,7 +225,7 @@ def rich_tag_counts(value: str) -> Counter:
     return counts
 
 
-def paired_tags_balanced(counts: Counter) -> bool:
+def paired_tags_balanced(counts: Counter[tuple[str, str]]) -> bool:
     return all(
         counts[(name, "open")] == counts[(name, "close")]
         for name in PAIRED_TAGS
@@ -262,7 +264,7 @@ class Report:
         return sum(len(v) for v in self.warnings.values())
 
 
-def validate_pair(english_path, ko_path, verbose: bool) -> Report:
+def validate_pair(english_path: Path, ko_path: Path, verbose: bool) -> Report:
     report = Report(ko_path.name, verbose)
     english = parse_dictionary(english_path)
     ko = parse_dictionary(ko_path)
@@ -303,9 +305,10 @@ def validate_pair(english_path, ko_path, verbose: bool) -> Report:
             report.error("빈 값", key)
             continue
 
-        if "{" in ko_value or "}" in ko_value:
-            if "{" not in en_value and "}" not in en_value:
-                report.error("값 내 중괄호", f"{key}: {ko_value[:60]!r}")
+        if ("{" in ko_value or "}" in ko_value) and (
+            "{" not in en_value and "}" not in en_value
+        ):
+            report.error("값 내 중괄호", f"{key}: {ko_value[:60]!r}")
 
         en_args, en_sigs = lingoona_info(en_value)
         ko_args, ko_sigs = lingoona_info(ko_value)
