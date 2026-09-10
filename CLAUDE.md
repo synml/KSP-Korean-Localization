@@ -156,7 +156,7 @@ netkan 실물은 리포 루트 `KSPKoreanLocalization.netkan` — **그 파일�
 봇이 유도하므로 생략. 플러그인 방식이므로 ModuleManager `depends` 불필요. DLC 번역은
 미보유자에게도 무해(해당 키가 로드되지 않을 뿐)하므로 단일 패키지로 배포.
 
-NetKAN PR: [KSP-CKAN/NetKAN#11379](https://github.com/KSP-CKAN/NetKAN/pull/11379).
+NetKAN PR: [KSP-CKAN/NetKAN#11396](https://github.com/KSP-CKAN/NetKAN/pull/11396).
 
 ## 번역 스타일 가이드
 
