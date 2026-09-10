@@ -22,8 +22,6 @@ KSP는 한국어를 공식 지원하지 않기 때문에, 이 패치는 원본 �
 2. "KSP Korean Localization"을 검색해 체크합니다.
 3. **Apply changes**를 눌러 설치합니다. 이후 업데이트도 CKAN이 자동으로 관리합니다.
 
-> CKAN 등록 진행 중입니다. 등록 전까지는 아래 자동/수동 설치를 이용해 주세요.
-
 ### 자동 설치 (배치파일)
 
 1. **[install.cmd 다운로드](https://github.com/synml/KSP-Korean-Localization/releases/latest/download/install.cmd)**
