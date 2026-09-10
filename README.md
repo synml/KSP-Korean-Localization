@@ -24,7 +24,7 @@ KSP는 한국어를 공식 지원하지 않기 때문에, 이 패치는 원본 �
 
 ### 자동 설치 (배치파일)
 
-1. **[install.cmd 다운로드](https://github.com/synml/KSP-Korean-Localization/releases/latest/download/install.cmd)**
+1. [install.cmd 다운로드](https://github.com/synml/KSP-Korean-Localization/releases/latest/download/install.cmd)
 2. `install.cmd`를 더블클릭합니다.
 3. 자동으로 KSP 설치 위치를 찾아 확인을 물어본 뒤, 최신 패치를 내려받아 설치합니다.
 
