@@ -20,7 +20,7 @@ KSP는 한국어를 공식 지원하지 않기 때문에, 이 패치는 원본 �
 
 1. [CKAN](https://github.com/KSP-CKAN/CKAN/releases)을 실행합니다.
 2. "KSP Korean Localization"을 검색해 체크합니다.
-3. **Apply changes**를 눌러 설치합니다. 이후 업데이트도 CKAN이 자동으로 관리합니다.
+3. "Apply changes"를 눌러 설치합니다. 이후 업데이트도 CKAN이 자동으로 관리합니다.
 
 ### 자동 설치 (배치파일)
 
@@ -38,7 +38,7 @@ KSP는 한국어를 공식 지원하지 않기 때문에, 이 패치는 원본 �
 
 ### 제거
 
-- CKAN으로 설치했다면 CKAN에서 "KSP Korean Localization"의 체크를 해제하고 **Apply changes**를 누릅니다.
+- CKAN으로 설치했다면 CKAN에서 "KSP Korean Localization"의 체크를 해제하고 "Apply changes"를 누릅니다.
 - 이외의 방법으로 설치했다면 `GameData/KSPKorean` 폴더를 삭제합니다.
 
 ## ⚠️ 알려진 제한
