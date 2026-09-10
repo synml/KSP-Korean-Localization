@@ -36,7 +36,10 @@ KSP는 한국어를 공식 지원하지 않기 때문에, 이 패치는 원본 �
 2. 압축을 풀어 `GameData/KSPKorean` 폴더를 KSP 설치 폴더의 `GameData` 안에 넣습니다.
 3. KSP를 실행하면 자동으로 한국어가 적용됩니다.
 
-**제거:** `GameData/KSPKorean` 폴더를 삭제하면 즉시 영어로 복원됩니다.
+### 제거
+
+- CKAN으로 설치했다면 CKAN에서 "KSP Korean Localization"의 체크를 해제하고 **Apply changes**를 누릅니다.
+- 이외의 방법으로 설치했다면 `GameData/KSPKorean` 폴더를 삭제합니다.
 
 ## ⚠️ 알려진 제한
 
